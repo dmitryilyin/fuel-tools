@@ -1,0 +1,302 @@
+<cib epoch="565" num_updates="1" admin_epoch="0" validate-with="pacemaker-1.2" crm_feature_set="3.0.7" have-quorum="1" dc-uuid="node-2.domain.tld" cib-last-written="Tue Jul 22 17:03:31 2014" update-origin="node-3.domain.tld" update-client="crm_attribute">
+  <configuration>
+    <crm_config>
+      <cluster_property_set id="cib-bootstrap-options">
+        <nvpair id="cib-bootstrap-options-dc-version" name="dc-version" value="1.1.10-14.el6_5.3-368c726"/>
+        <nvpair id="cib-bootstrap-options-cluster-infrastructure" name="cluster-infrastructure" value="classic openais (with plugin)"/>
+        <nvpair id="cib-bootstrap-options-expected-quorum-votes" name="expected-quorum-votes" value="3"/>
+        <nvpair name="no-quorum-policy" value="ignore" id="cib-bootstrap-options-no-quorum-policy"/>
+        <nvpair name="stonith-enabled" value="false" id="cib-bootstrap-options-stonith-enabled"/>
+        <nvpair name="start-failure-is-fatal" value="false" id="cib-bootstrap-options-start-failure-is-fatal"/>
+        <nvpair name="symmetric-cluster" value="false" id="cib-bootstrap-options-symmetric-cluster"/>
+        <nvpair id="cib-bootstrap-options-last-lrm-refresh" name="last-lrm-refresh" value="1406040315"/>
+      </cluster_property_set>
+    </crm_config>
+    <nodes>
+      <node id="node-1.domain.tld" uname="node-1.domain.tld">
+        <instance_attributes id="nodes-node-1.domain.tld">
+          <nvpair id="nodes-node-1.domain.tld-gtid" name="gtid" value="d88014c6-11a8-11e4-943c-3fe27bf15aec:14810"/>
+        </instance_attributes>
+      </node>
+      <node id="node-2.domain.tld" uname="node-2.domain.tld">
+        <instance_attributes id="nodes-node-2.domain.tld">
+          <nvpair id="nodes-node-2.domain.tld-gtid" name="gtid" value="d88014c6-11a8-11e4-943c-3fe27bf15aec:14825"/>
+        </instance_attributes>
+      </node>
+      <node id="node-3.domain.tld" uname="node-3.domain.tld">
+        <instance_attributes id="nodes-node-3.domain.tld">
+          <nvpair id="nodes-node-3.domain.tld-gtid" name="gtid" value="d88014c6-11a8-11e4-943c-3fe27bf15aec:14869"/>
+        </instance_attributes>
+      </node>
+    </nodes>
+    <resources>
+      <primitive id="vip__management_old" provider="mirantis" type="ns_IPaddr2" class="ocf">
+        <instance_attributes id="vip__management_old-instance_attributes">
+          <nvpair name="iptables_comment" value="masquerade-for-management-net" id="vip__management_old-instance_attributes-iptables_comment"/>
+          <nvpair name="ip" value="192.168.0.1" id="vip__management_old-instance_attributes-ip"/>
+          <nvpair name="base_veth" value="eth0.101-hapr" id="vip__management_old-instance_attributes-base_veth"/>
+          <nvpair name="iflabel" value="ka" id="vip__management_old-instance_attributes-iflabel"/>
+          <nvpair name="iptables_stop_rules" value="iptables -t mangle -D PREROUTING -i eth0.101-hapr -j MARK --set-mark 0x2b ; iptables -t nat -D POSTROUTING -m mark --mark 0x2b ! -o eth0.101 -j MASQUERADE" id="vip__management_old-instance_attributes-iptables_stop_rules"/>
+          <nvpair name="gateway" value="link" id="vip__management_old-instance_attributes-gateway"/>
+          <nvpair name="nic" value="eth0.101" id="vip__management_old-instance_attributes-nic"/>
+          <nvpair name="iptables_start_rules" value="iptables -t mangle -I PREROUTING -i eth0.101-hapr -j MARK --set-mark 0x2b ; iptables -t nat -I POSTROUTING -m mark --mark 0x2b ! -o eth0.101 -j MASQUERADE" id="vip__management_old-instance_attributes-iptables_start_rules"/>
+          <nvpair name="gateway_metric" value="20" id="vip__management_old-instance_attributes-gateway_metric"/>
+          <nvpair name="ns_veth" value="hapr-m" id="vip__management_old-instance_attributes-ns_veth"/>
+          <nvpair name="ns" value="haproxy" id="vip__management_old-instance_attributes-ns"/>
+          <nvpair name="cidr_netmask" value="24" id="vip__management_old-instance_attributes-cidr_netmask"/>
+        </instance_attributes>
+        <meta_attributes id="vip__management_old-meta_attributes">
+          <nvpair name="resource-stickiness" value="1" id="vip__management_old-meta_attributes-resource-stickiness"/>
+          <nvpair id="vip__management_old-meta_attributes-is-managed" name="is-managed" value="true"/>
+          <nvpair id="vip__management_old-meta_attributes-target-role" name="target-role" value="Started"/>
+        </meta_attributes>
+        <operations>
+          <op name="monitor" interval="2" id="vip__management_old-monitor-2" timeout="30"/>
+          <op name="start" interval="0" id="vip__management_old-start-0" timeout="30"/>
+          <op name="stop" interval="0" id="vip__management_old-stop-0" timeout="30"/>
+        </operations>
+      </primitive>
+      <primitive id="vip__public_old" provider="mirantis" type="ns_IPaddr2" class="ocf">
+        <instance_attributes id="vip__public_old-instance_attributes">
+          <nvpair name="iptables_comment" value="masquerade-for-public-net" id="vip__public_old-instance_attributes-iptables_comment"/>
+          <nvpair name="ip" value="172.16.0.2" id="vip__public_old-instance_attributes-ip"/>
+          <nvpair name="base_veth" value="eth1-hapr" id="vip__public_old-instance_attributes-base_veth"/>
+          <nvpair name="iflabel" value="ka" id="vip__public_old-instance_attributes-iflabel"/>
+          <nvpair name="iptables_stop_rules" value="iptables -t mangle -D PREROUTING -i eth1-hapr -j MARK --set-mark 0x2a ; iptables -t nat -D POSTROUTING -m mark --mark 0x2a ! -o eth1 -j MASQUERADE" id="vip__public_old-instance_attributes-iptables_stop_rules"/>
+          <nvpair name="gateway" value="link" id="vip__public_old-instance_attributes-gateway"/>
+          <nvpair name="nic" value="eth1" id="vip__public_old-instance_attributes-nic"/>
+          <nvpair name="iptables_start_rules" value="iptables -t mangle -I PREROUTING -i eth1-hapr -j MARK --set-mark 0x2a ; iptables -t nat -I POSTROUTING -m mark --mark 0x2a ! -o eth1 -j MASQUERADE" id="vip__public_old-instance_attributes-iptables_start_rules"/>
+          <nvpair name="gateway_metric" value="10" id="vip__public_old-instance_attributes-gateway_metric"/>
+          <nvpair name="ns_veth" value="hapr-p" id="vip__public_old-instance_attributes-ns_veth"/>
+          <nvpair name="ns" value="haproxy" id="vip__public_old-instance_attributes-ns"/>
+          <nvpair name="cidr_netmask" value="24" id="vip__public_old-instance_attributes-cidr_netmask"/>
+        </instance_attributes>
+        <meta_attributes id="vip__public_old-meta_attributes">
+          <nvpair name="resource-stickiness" value="1" id="vip__public_old-meta_attributes-resource-stickiness"/>
+          <nvpair id="vip__public_old-meta_attributes-is-managed" name="is-managed" value="true"/>
+          <nvpair id="vip__public_old-meta_attributes-target-role" name="target-role" value="Started"/>
+        </meta_attributes>
+        <operations>
+          <op name="monitor" interval="2" id="vip__public_old-monitor-2" timeout="30"/>
+          <op name="start" interval="0" id="vip__public_old-start-0" timeout="30"/>
+          <op name="stop" interval="0" id="vip__public_old-stop-0" timeout="30"/>
+        </operations>
+      </primitive>
+      <clone id="clone_p_mysql">
+        <primitive provider="mirantis" type="mysql-wss" id="p_mysql" class="ocf">
+          <instance_attributes id="p_mysql-instance_attributes">
+            <nvpair name="pid" value="/var/run/mysql/mysqld.pid" id="p_mysql-instance_attributes-pid"/>
+            <nvpair name="test_passwd" value="password" id="p_mysql-instance_attributes-test_passwd"/>
+            <nvpair name="test_user" value="wsrep_sst" id="p_mysql-instance_attributes-test_user"/>
+            <nvpair name="socket" value="/var/lib/mysql/mysql.sock" id="p_mysql-instance_attributes-socket"/>
+          </instance_attributes>
+          <operations>
+            <op name="monitor" interval="60" id="p_mysql-monitor-60" timeout="55"/>
+            <op name="start" interval="0" id="p_mysql-start-0" timeout="475"/>
+            <op name="stop" interval="0" id="p_mysql-stop-0" timeout="175"/>
+          </operations>
+        </primitive>
+        <meta_attributes id="clone_p_mysql-meta_attributes">
+          <nvpair id="clone_p_mysql-meta_attributes-is-managed" name="is-managed" value="true"/>
+          <nvpair id="clone_p_mysql-meta_attributes-target-role" name="target-role" value="Started"/>
+        </meta_attributes>
+      </clone>
+      <master id="master_p_rabbitmq-server">
+        <meta_attributes id="master_p_rabbitmq-server-meta_attributes">
+          <nvpair name="interleave" value="true" id="master_p_rabbitmq-server-meta_attributes-interleave"/>
+          <nvpair name="ordered" value="false" id="master_p_rabbitmq-server-meta_attributes-ordered"/>
+          <nvpair name="notify" value="true" id="master_p_rabbitmq-server-meta_attributes-notify"/>
+          <nvpair name="target-role" value="Started" id="master_p_rabbitmq-server-meta_attributes-target-role"/>
+          <nvpair name="master-node-max" value="1" id="master_p_rabbitmq-server-meta_attributes-master-node-max"/>
+          <nvpair name="master-max" value="1" id="master_p_rabbitmq-server-meta_attributes-master-max"/>
+          <nvpair id="master_p_rabbitmq-server-meta_attributes-is-managed" name="is-managed" value="true"/>
+        </meta_attributes>
+        <primitive provider="mirantis" type="rabbitmq-server" id="p_rabbitmq-server" class="ocf">
+          <instance_attributes id="p_rabbitmq-server-instance_attributes">
+            <nvpair name="node_port" value="5673" id="p_rabbitmq-server-instance_attributes-node_port"/>
+          </instance_attributes>
+          <meta_attributes id="p_rabbitmq-server-meta_attributes">
+            <nvpair name="migration-threshold" value="INFINITY" id="p_rabbitmq-server-meta_attributes-migration-threshold"/>
+            <nvpair name="failure-timeout" value="60s" id="p_rabbitmq-server-meta_attributes-failure-timeout"/>
+          </meta_attributes>
+          <operations>
+            <op name="monitor" interval="30" id="p_rabbitmq-server-monitor-30" timeout="60"/>
+            <op name="notify" interval="0" id="p_rabbitmq-server-notify-0" timeout="60"/>
+            <op name="start" interval="0" id="p_rabbitmq-server-start-0" timeout="120"/>
+            <op name="promote" interval="0" id="p_rabbitmq-server-promote-0" timeout="120"/>
+            <op name="demote" interval="0" id="p_rabbitmq-server-demote-0" timeout="60"/>
+            <op name="stop" interval="0" id="p_rabbitmq-server-stop-0" timeout="60"/>
+            <op name="monitor" interval="27" id="p_rabbitmq-server-monitor-27" role="Master" timeout="60"/>
+          </operations>
+        </primitive>
+      </master>
+      <clone id="clone_p_haproxy">
+        <meta_attributes id="clone_p_haproxy-meta_attributes">
+          <nvpair name="interleave" value="true" id="clone_p_haproxy-meta_attributes-interleave"/>
+          <nvpair id="clone_p_haproxy-meta_attributes-is-managed" name="is-managed" value="true"/>
+          <nvpair id="clone_p_haproxy-meta_attributes-target-role" name="target-role" value="Started"/>
+        </meta_attributes>
+        <primitive provider="mirantis" type="ns_haproxy" id="p_haproxy" class="ocf">
+          <instance_attributes id="p_haproxy-instance_attributes">
+            <nvpair name="ns" value="haproxy" id="p_haproxy-instance_attributes-ns"/>
+          </instance_attributes>
+          <meta_attributes id="p_haproxy-meta_attributes">
+            <nvpair name="migration-threshold" value="3" id="p_haproxy-meta_attributes-migration-threshold"/>
+            <nvpair name="failure-timeout" value="120" id="p_haproxy-meta_attributes-failure-timeout"/>
+          </meta_attributes>
+          <operations>
+            <op name="monitor" interval="20" id="p_haproxy-monitor-20" timeout="10"/>
+            <op name="start" interval="0" id="p_haproxy-start-0" timeout="30"/>
+            <op name="stop" interval="0" id="p_haproxy-stop-0" timeout="30"/>
+          </operations>
+        </primitive>
+      </clone>
+      <primitive provider="mirantis" type="openstack-heat-engine" id="p_openstack-heat-engine" class="ocf">
+        <meta_attributes id="p_openstack-heat-engine-meta_attributes">
+          <nvpair name="resource-stickiness" value="1" id="p_openstack-heat-engine-meta_attributes-resource-stickiness"/>
+          <nvpair id="p_openstack-heat-engine-meta_attributes-is-managed" name="is-managed" value="true"/>
+          <nvpair id="p_openstack-heat-engine-meta_attributes-target-role" name="target-role" value="Started"/>
+        </meta_attributes>
+        <operations>
+          <op name="monitor" interval="20" id="p_openstack-heat-engine-monitor-20" timeout="30"/>
+          <op name="start" interval="0" id="p_openstack-heat-engine-start-0" timeout="60"/>
+          <op name="stop" interval="0" id="p_openstack-heat-engine-stop-0" timeout="60"/>
+        </operations>
+      </primitive>
+    </resources>
+    <constraints>
+      <rsc_location id="vip__management_old_on_node-1.domain.tld" node="node-1.domain.tld" rsc="vip__management_old" score="0"/>
+      <rsc_location id="vip__public_old_on_node-1.domain.tld" node="node-1.domain.tld" rsc="vip__public_old" score="0"/>
+      <rsc_location id="clone_p_mysql_on_node-1.domain.tld" node="node-1.domain.tld" rsc="clone_p_mysql" score="0"/>
+      <rsc_location id="master_p_rabbitmq-server_on_node-1.domain.tld" node="node-1.domain.tld" rsc="master_p_rabbitmq-server" score="0"/>
+      <rsc_colocation id="vip_management-with-haproxy" rsc="vip__management_old" score="INFINITY" with-rsc="clone_p_haproxy"/>
+      <rsc_colocation id="vip_public-with-haproxy" rsc="vip__public_old" score="INFINITY" with-rsc="clone_p_haproxy"/>
+      <rsc_location id="p_openstack-heat-engine_on_node-1.domain.tld" node="node-1.domain.tld" rsc="p_openstack-heat-engine" score="0"/>
+      <rsc_location id="vip__management_old_on_node-2.domain.tld" node="node-2.domain.tld" rsc="vip__management_old" score="0"/>
+      <rsc_location id="vip__public_old_on_node-2.domain.tld" node="node-2.domain.tld" rsc="vip__public_old" score="0"/>
+      <rsc_location id="clone_p_mysql_on_node-2.domain.tld" node="node-2.domain.tld" rsc="clone_p_mysql" score="0"/>
+      <rsc_location id="master_p_rabbitmq-server_on_node-2.domain.tld" node="node-2.domain.tld" rsc="master_p_rabbitmq-server" score="0"/>
+      <rsc_location id="clone_p_haproxy_on_node-2.domain.tld" node="node-2.domain.tld" rsc="clone_p_haproxy" score="0"/>
+      <rsc_location id="p_openstack-heat-engine_on_node-2.domain.tld" node="node-2.domain.tld" rsc="p_openstack-heat-engine" score="0"/>
+      <rsc_location id="vip__management_old_on_node-3.domain.tld" node="node-3.domain.tld" rsc="vip__management_old" score="0"/>
+      <rsc_location id="vip__public_old_on_node-3.domain.tld" node="node-3.domain.tld" rsc="vip__public_old" score="0"/>
+      <rsc_location id="clone_p_mysql_on_node-3.domain.tld" node="node-3.domain.tld" rsc="clone_p_mysql" score="0"/>
+      <rsc_location id="master_p_rabbitmq-server_on_node-3.domain.tld" node="node-3.domain.tld" rsc="master_p_rabbitmq-server" score="0"/>
+      <rsc_location id="clone_p_haproxy_on_node-3.domain.tld" node="node-3.domain.tld" rsc="clone_p_haproxy" score="0"/>
+      <rsc_location id="p_openstack-heat-engine_on_node-3.domain.tld" node="node-3.domain.tld" rsc="p_openstack-heat-engine" score="0"/>
+    </constraints>
+  </configuration>
+  <status>
+    <node_state id="node-1.domain.tld" uname="node-1.domain.tld" in_ccm="true" crmd="online" crm-debug-origin="do_update_resource" join="member" expected="member">
+      <transient_attributes id="node-1.domain.tld">
+        <instance_attributes id="status-node-1.domain.tld">
+          <nvpair id="status-node-1.domain.tld-probe_complete" name="probe_complete" value="true"/>
+          <nvpair id="status-node-1.domain.tld-master-p_rabbitmq-server" name="master-p_rabbitmq-server" value="1000"/>
+          <nvpair id="status-node-1.domain.tld-rabbit-master" name="rabbit-master" value="true"/>
+          <nvpair id="status-node-1.domain.tld-rabbit-start-time" name="rabbit-start-time" value="1406037882"/>
+        </instance_attributes>
+      </transient_attributes>
+      <lrm id="node-1.domain.tld">
+        <lrm_resources>
+          <lrm_resource id="p_openstack-heat-engine" type="openstack-heat-engine" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="p_openstack-heat-engine_last_failure_0" operation_key="p_openstack-heat-engine_monitor_0" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="9:0:7:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;9:0:7:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="125" rc-code="0" op-status="0" interval="0" last-run="1406038588" last-rc-change="1406038588" exec-time="103" queue-time="0" op-digest="f2317cad3d54cec5d7d7aa7d0bf35cf8"/>
+            <lrm_rsc_op id="p_openstack-heat-engine_monitor_20000" operation_key="p_openstack-heat-engine_monitor_20000" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="54:1:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;54:1:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="143" rc-code="0" op-status="0" interval="20000" last-rc-change="1406038590" exec-time="71" queue-time="0" op-digest="02a5bcf940fc8d3239701acb11438d6a"/>
+          </lrm_resource>
+          <lrm_resource id="vip__management_old" type="ns_IPaddr2" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="vip__management_old_last_failure_0" operation_key="vip__management_old_monitor_0" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="4:0:7:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;4:0:7:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="115" rc-code="0" op-status="0" interval="0" last-run="1406038588" last-rc-change="1406038588" exec-time="2103" queue-time="0" op-digest="55c0a6e6ace3998b15503d18a335f63c"/>
+            <lrm_rsc_op id="vip__management_old_monitor_2000" operation_key="vip__management_old_monitor_2000" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="7:1:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;7:1:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="133" rc-code="0" op-status="0" interval="2000" last-rc-change="1406038590" exec-time="2080" queue-time="0" op-digest="0e9fe9648d582ed30bbb4475affd853d"/>
+            <lrm_rsc_op id="vip__management_old_last_0" operation_key="vip__management_old_stop_0" operation="stop" crm-debug-origin="do_update_resource" crm_feature_set="3.0.7" transition-key="18:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;18:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="194" rc-code="0" op-status="0" interval="0" last-run="1406048465" last-rc-change="1406048465" exec-time="3357" queue-time="0" op-digest="55c0a6e6ace3998b15503d18a335f63c"/>
+          </lrm_resource>
+          <lrm_resource id="p_mysql" type="mysql-wss" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="p_mysql_last_failure_0" operation_key="p_mysql_monitor_0" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="6:0:7:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;6:0:7:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="119" rc-code="0" op-status="0" interval="0" last-run="1406038588" last-rc-change="1406038588" exec-time="326" queue-time="0" op-digest="ec1169098c99257a885628085fa0d799"/>
+            <lrm_rsc_op id="p_mysql_monitor_60000" operation_key="p_mysql_monitor_60000" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="13:1:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;13:1:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="137" rc-code="0" op-status="0" interval="60000" last-rc-change="1406038590" exec-time="178" queue-time="0" op-digest="ca415b3db0d53748db1f774e431e9309"/>
+          </lrm_resource>
+          <lrm_resource id="vip__public_old" type="ns_IPaddr2" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="vip__public_old_last_failure_0" operation_key="vip__public_old_monitor_0" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="5:0:7:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;5:0:7:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="117" rc-code="0" op-status="0" interval="0" last-run="1406038588" last-rc-change="1406038588" exec-time="2198" queue-time="0" op-digest="7efb5f02fc8fa26172c79792fb85f362"/>
+            <lrm_rsc_op id="vip__public_old_monitor_2000" operation_key="vip__public_old_monitor_2000" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="10:1:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;10:1:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="135" rc-code="0" op-status="0" interval="2000" last-rc-change="1406038590" exec-time="2142" queue-time="0" op-digest="3d6425d3c79376991ec762893392ac1b"/>
+            <lrm_rsc_op id="vip__public_old_last_0" operation_key="vip__public_old_stop_0" operation="stop" crm-debug-origin="do_update_resource" crm_feature_set="3.0.7" transition-key="21:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;21:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="197" rc-code="0" op-status="0" interval="0" last-run="1406048465" last-rc-change="1406048465" exec-time="2143" queue-time="0" op-digest="7efb5f02fc8fa26172c79792fb85f362"/>
+          </lrm_resource>
+          <lrm_resource id="p_haproxy" type="ns_haproxy" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="p_haproxy_last_0" operation_key="p_haproxy_stop_0" operation="stop" crm-debug-origin="do_update_resource" crm_feature_set="3.0.7" transition-key="66:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;66:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="200" rc-code="0" op-status="0" interval="0" last-run="1406048465" last-rc-change="1406048465" exec-time="73" queue-time="0" op-digest="2a23892614b6b1d0f70ca66b073b5bc0"/>
+            <lrm_rsc_op id="p_haproxy_monitor_20000" operation_key="p_haproxy_monitor_20000" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="4:397:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;4:397:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="190" rc-code="0" op-status="0" interval="20000" last-rc-change="1406045809" exec-time="52" queue-time="0" op-digest="3513c6578b2be63b3c075d885eb6ac8d"/>
+          </lrm_resource>
+          <lrm_resource id="p_rabbitmq-server" type="rabbitmq-server" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="p_rabbitmq-server_last_0" operation_key="p_rabbitmq-server_promote_0" operation="promote" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="25:38:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;25:38:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="160" rc-code="0" op-status="0" interval="0" last-run="1406039083" last-rc-change="1406039083" exec-time="1199" queue-time="0" op-digest="6f1cd990340e90d62b7efecdec17ba24"/>
+            <lrm_rsc_op id="p_rabbitmq-server_last_failure_0" operation_key="p_rabbitmq-server_monitor_0" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="7:0:7:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;7:0:7:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="121" rc-code="0" op-status="0" interval="0" last-run="1406038588" last-rc-change="1406038588" exec-time="1087" queue-time="0" op-digest="6f1cd990340e90d62b7efecdec17ba24"/>
+            <lrm_rsc_op id="p_rabbitmq-server_monitor_27000" operation_key="p_rabbitmq-server_monitor_27000" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="27:39:8:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:8;27:39:8:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="166" rc-code="8" op-status="0" interval="27000" last-rc-change="1406039085" exec-time="1186" queue-time="1" op-digest="f81fdd633d61ff45f1dfcce00be7c955"/>
+          </lrm_resource>
+        </lrm_resources>
+      </lrm>
+    </node_state>
+    <node_state id="node-2.domain.tld" uname="node-2.domain.tld" crmd="online" crm-debug-origin="do_update_resource" in_ccm="true" join="member" expected="member">
+      <transient_attributes id="node-2.domain.tld">
+        <instance_attributes id="status-node-2.domain.tld">
+          <nvpair id="status-node-2.domain.tld-probe_complete" name="probe_complete" value="true"/>
+          <nvpair id="status-node-2.domain.tld-master-p_rabbitmq-server" name="master-p_rabbitmq-server" value="1000"/>
+          <nvpair id="status-node-2.domain.tld-rabbit-start-time" name="rabbit-start-time" value="1406039117"/>
+        </instance_attributes>
+      </transient_attributes>
+      <lrm id="node-2.domain.tld">
+        <lrm_resources>
+          <lrm_resource id="p_openstack-heat-engine" type="openstack-heat-engine" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="p_openstack-heat-engine_last_0" operation_key="p_openstack-heat-engine_monitor_0" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="14:56:7:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:7;14:56:7:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="124" rc-code="7" op-status="0" interval="0" last-run="1406039388" last-rc-change="1406039388" exec-time="34" queue-time="0" op-digest="f2317cad3d54cec5d7d7aa7d0bf35cf8"/>
+          </lrm_resource>
+          <lrm_resource id="vip__management_old" type="ns_IPaddr2" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="vip__management_old_last_0" operation_key="vip__management_old_start_0" operation="start" crm-debug-origin="do_update_resource" crm_feature_set="3.0.7" transition-key="19:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;19:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="133" rc-code="0" op-status="0" interval="0" last-run="1406048468" last-rc-change="1406048468" exec-time="1226" queue-time="0" op-digest="55c0a6e6ace3998b15503d18a335f63c"/>
+            <lrm_rsc_op id="vip__management_old_monitor_2000" operation_key="vip__management_old_monitor_2000" operation="monitor" crm-debug-origin="do_update_resource" crm_feature_set="3.0.7" transition-key="20:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;20:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="136" rc-code="0" op-status="0" interval="2000" last-rc-change="1406048469" exec-time="2065" queue-time="0" op-digest="0e9fe9648d582ed30bbb4475affd853d"/>
+          </lrm_resource>
+          <lrm_resource id="p_mysql" type="mysql-wss" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="p_mysql_last_0" operation_key="p_mysql_start_0" operation="start" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="17:25:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;17:25:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="64" rc-code="0" op-status="0" interval="0" last-run="1406038943" last-rc-change="1406038943" exec-time="17366" queue-time="0" op-digest="ec1169098c99257a885628085fa0d799"/>
+            <lrm_rsc_op id="p_mysql_monitor_60000" operation_key="p_mysql_monitor_60000" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="21:26:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;21:26:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="67" rc-code="0" op-status="0" interval="60000" last-rc-change="1406038961" exec-time="102" queue-time="0" op-digest="ca415b3db0d53748db1f774e431e9309"/>
+          </lrm_resource>
+          <lrm_resource id="vip__public_old" type="ns_IPaddr2" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="vip__public_old_last_0" operation_key="vip__public_old_monitor_0" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="12:41:7:f143c775-883d-46ff-8647-fa9c7e19b91a" transition-magic="0:7;12:41:7:f143c775-883d-46ff-8647-fa9c7e19b91a" call-id="9" rc-code="7" op-status="0" interval="0" last-run="1406038540" last-rc-change="1406038540" exec-time="20" queue-time="0" op-digest="7efb5f02fc8fa26172c79792fb85f362"/>
+          </lrm_resource>
+          <lrm_resource id="p_haproxy" type="ns_haproxy" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="p_haproxy_last_0" operation_key="p_haproxy_start_0" operation="start" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="57:51:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;57:51:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="114" rc-code="0" op-status="0" interval="0" last-run="1406039285" last-rc-change="1406039285" exec-time="71" queue-time="0" op-digest="2a23892614b6b1d0f70ca66b073b5bc0"/>
+            <lrm_rsc_op id="p_haproxy_monitor_20000" operation_key="p_haproxy_monitor_20000" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="58:51:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;58:51:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="117" rc-code="0" op-status="0" interval="20000" last-rc-change="1406039285" exec-time="46" queue-time="0" op-digest="3513c6578b2be63b3c075d885eb6ac8d"/>
+          </lrm_resource>
+          <lrm_resource id="p_rabbitmq-server" type="rabbitmq-server" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="p_rabbitmq-server_last_0" operation_key="p_rabbitmq-server_start_0" operation="start" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="28:40:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;28:40:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="92" rc-code="0" op-status="0" interval="0" last-run="1406039104" last-rc-change="1406039104" exec-time="7384" queue-time="1" op-digest="6f1cd990340e90d62b7efecdec17ba24"/>
+            <lrm_rsc_op id="p_rabbitmq-server_monitor_30000" operation_key="p_rabbitmq-server_monitor_30000" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="30:41:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;30:41:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="98" rc-code="0" op-status="0" interval="30000" last-rc-change="1406039117" exec-time="1057" queue-time="0" op-digest="f81fdd633d61ff45f1dfcce00be7c955"/>
+          </lrm_resource>
+        </lrm_resources>
+      </lrm>
+    </node_state>
+    <node_state id="node-3.domain.tld" uname="node-3.domain.tld" crmd="online" crm-debug-origin="do_update_resource" in_ccm="true" join="member" expected="member">
+      <transient_attributes id="node-3.domain.tld">
+        <instance_attributes id="status-node-3.domain.tld">
+          <nvpair id="status-node-3.domain.tld-probe_complete" name="probe_complete" value="true"/>
+          <nvpair id="status-node-3.domain.tld-master-p_rabbitmq-server" name="master-p_rabbitmq-server" value="1"/>
+          <nvpair id="status-node-3.domain.tld-rabbit-start-time" name="rabbit-start-time" value="1406040052"/>
+        </instance_attributes>
+      </transient_attributes>
+      <lrm id="node-3.domain.tld">
+        <lrm_resources>
+          <lrm_resource id="p_openstack-heat-engine" type="openstack-heat-engine" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="p_openstack-heat-engine_last_0" operation_key="p_openstack-heat-engine_monitor_0" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="18:120:7:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:7;18:120:7:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="122" rc-code="7" op-status="0" interval="0" last-run="1406040315" last-rc-change="1406040315" exec-time="29" queue-time="0" op-digest="f2317cad3d54cec5d7d7aa7d0bf35cf8"/>
+          </lrm_resource>
+          <lrm_resource id="vip__management_old" type="ns_IPaddr2" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="vip__management_old_last_0" operation_key="vip__management_old_monitor_0" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="15:64:7:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:7;15:64:7:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="5" rc-code="7" op-status="0" interval="0" last-run="1406039609" last-rc-change="1406039609" exec-time="23" queue-time="0" op-digest="55c0a6e6ace3998b15503d18a335f63c"/>
+          </lrm_resource>
+          <lrm_resource id="p_mysql" type="mysql-wss" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="p_mysql_last_0" operation_key="p_mysql_start_0" operation="start" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="24:87:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;24:87:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="62" rc-code="0" op-status="0" interval="0" last-run="1406039879" last-rc-change="1406039879" exec-time="12300" queue-time="0" op-digest="ec1169098c99257a885628085fa0d799"/>
+            <lrm_rsc_op id="p_mysql_monitor_60000" operation_key="p_mysql_monitor_60000" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="25:88:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;25:88:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="66" rc-code="0" op-status="0" interval="60000" last-rc-change="1406039891" exec-time="108" queue-time="1" op-digest="ca415b3db0d53748db1f774e431e9309"/>
+          </lrm_resource>
+          <lrm_resource id="vip__public_old" type="ns_IPaddr2" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="vip__public_old_last_0" operation_key="vip__public_old_start_0" operation="start" crm-debug-origin="do_update_resource" crm_feature_set="3.0.7" transition-key="22:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;22:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="125" rc-code="0" op-status="0" interval="0" last-run="1406048467" last-rc-change="1406048467" exec-time="1240" queue-time="0" op-digest="7efb5f02fc8fa26172c79792fb85f362"/>
+            <lrm_rsc_op id="vip__public_old_monitor_2000" operation_key="vip__public_old_monitor_2000" operation="monitor" crm-debug-origin="do_update_resource" crm_feature_set="3.0.7" transition-key="23:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;23:532:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="128" rc-code="0" op-status="0" interval="2000" last-rc-change="1406048468" exec-time="2081" queue-time="0" op-digest="3d6425d3c79376991ec762893392ac1b"/>
+          </lrm_resource>
+          <lrm_resource id="p_haproxy" type="ns_haproxy" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="p_haproxy_last_0" operation_key="p_haproxy_start_0" operation="start" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="67:113:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;67:113:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="112" rc-code="0" op-status="0" interval="0" last-run="1406040224" last-rc-change="1406040224" exec-time="73" queue-time="0" op-digest="2a23892614b6b1d0f70ca66b073b5bc0"/>
+            <lrm_rsc_op id="p_haproxy_monitor_20000" operation_key="p_haproxy_monitor_20000" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="68:113:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;68:113:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="115" rc-code="0" op-status="0" interval="20000" last-rc-change="1406040224" exec-time="53" queue-time="0" op-digest="3513c6578b2be63b3c075d885eb6ac8d"/>
+          </lrm_resource>
+          <lrm_resource id="p_rabbitmq-server" type="rabbitmq-server" class="ocf" provider="mirantis">
+            <lrm_rsc_op id="p_rabbitmq-server_last_0" operation_key="p_rabbitmq-server_start_0" operation="start" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="36:101:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;36:101:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="88" rc-code="0" op-status="0" interval="0" last-run="1406040039" last-rc-change="1406040039" exec-time="7075" queue-time="0" op-digest="6f1cd990340e90d62b7efecdec17ba24"/>
+            <lrm_rsc_op id="p_rabbitmq-server_monitor_30000" operation_key="p_rabbitmq-server_monitor_30000" operation="monitor" crm-debug-origin="build_active_RAs" crm_feature_set="3.0.7" transition-key="38:102:0:65bf09f5-df36-451a-9db8-c978ca218a5d" transition-magic="0:0;38:102:0:65bf09f5-df36-451a-9db8-c978ca218a5d" call-id="94" rc-code="0" op-status="0" interval="30000" last-rc-change="1406040052" exec-time="1132" queue-time="0" op-digest="f81fdd633d61ff45f1dfcce00be7c955"/>
+          </lrm_resource>
+        </lrm_resources>
+      </lrm>
+    </node_state>
+  </status>
+</cib>
