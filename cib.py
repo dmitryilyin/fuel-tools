@@ -1,6 +1,6 @@
-import sys
 import subprocess
 from xml.dom.minidom import *
+
 
 class CIB:
     """
@@ -45,8 +45,8 @@ class CIB:
         """
         shell = False
         cmd = ['/usr/sbin/cibadmin', '--query']
-        exception = 'Could not get CIB using cibadmin!'       
- 
+        exception = 'Could not get CIB using cibadmin!'
+
         try:
             popen = subprocess.Popen(
                 cmd,
@@ -57,9 +57,10 @@ class CIB:
 
             status_code = popen.wait()
             stdout = popen.stdout
-            #stderr = popen.stderr
+            stderr = popen.stderr
 
             cib = stdout.read()
+            exception += ' ' + stderr.read()
         except:
             raise StandardError(exception)
         if status_code != 0 or len(cib) == 0:
@@ -67,7 +68,7 @@ class CIB:
         else:
             self.xml = xml.dom.minidom.parseString(cib)
         if not self.xml:
-            raise StandardError('Could not get CIB from pacemaker!')
+            raise StandardError(exception)
         return self.xml
 
     def decode_lrm_op(self, lrm_op_block):

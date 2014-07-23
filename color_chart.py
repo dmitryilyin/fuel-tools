@@ -4,8 +4,8 @@ import sys
 
 
 democolor = Color()
-for fg in [None] + list(range(0, 7)):
-    for bg in [None] + list(range(0, 7)):
+for fg in [None, 0, 1, 2, 3, 4, 5, 6, 7]:
+    for bg in [None, 0, 1, 2, 3, 4, 5, 6, 7]:
         for attr in sorted(democolor.attrtable.values()):
             democolor.setFG(fg)
             democolor.setBG(bg)
