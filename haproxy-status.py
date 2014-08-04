@@ -17,6 +17,7 @@ class Interface:
         self.parser.add_argument("-f", "--file", help="get stats from file", type=str)
         self.parser.add_argument("-y", "--yaml", help="output as YAML", action='store_true')
         self.parser.add_argument("-c", "--csv", help="output as CSV", action='store_true')
+        self.parser.add_argument("-j", "--json", help="output as JSON", action='store_true')
         self.args = self.parser.parse_args()
 
         self.color_on = Color(foreground='green')
@@ -149,6 +150,14 @@ class Interface:
         from yaml import dump
         self.puts(dump(self.status.data))
 
+    def print_json(self):
+        """
+        Print JSON formated data
+        @return: JSON string
+        """
+        from json import dumps
+        self.puts(dumps(self.status.data))
+
     def print_service_title(self, service_name, service_element):
         """
         Print a line description of a service
@@ -192,6 +201,8 @@ class Interface:
             self.print_yaml()
         elif self.args.csv:
             self.print_csv()
+        elif self.args.json:
+            self.print_json()
         else:
             for service in sorted(self.status.data):
                 service_element = self.status.data[service]

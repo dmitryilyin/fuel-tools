@@ -38,6 +38,7 @@ class Interface:
         self.parser.add_argument("-p", "--primitive", help="filter by primitive name", type=str)
         self.parser.add_argument("-f", "--file", help="read CIB from file instead of Pacemaker", type=str)
         self.parser.add_argument("-y", "--yaml", help="output as YAML", action='store_true')
+        self.parser.add_argument("-j", "--json", help="output as JSON", action='store_true')
         self.args = self.parser.parse_args()
 
     def create_cib(self):
@@ -255,22 +256,43 @@ class Interface:
         line = '%s\n%s\n%s' % (40 * '=', node['id'], 40 * '=')
         self.puts(line)
 
+    def print_yaml(self):
+        """
+        Print YAML formated data
+        @return: YAML string
+        """
+        from yaml import dump
+        self.puts(dump(self.cib.nodes))
+
+    def print_json(self):
+        """
+        Print JSON formated data
+        @return: JSON string
+        """
+        from json import dumps
+        self.puts(dumps(self.cib.nodes))
+
     def print_table(self):
         """
         Print the entire output table
         """
-        for node_id, node_data in sorted(self.cib.nodes.items()):
-            if self.args.node:
-                if node_id != self.args.node:
-                    continue
-            self.print_node(node_data)
-            for resource_id, resource_data in sorted(node_data['resources'].items()):
-                if self.args.primitive:
-                    if resource_id != self.args.primitive:
+        if self.args.yaml:
+            self.print_yaml()
+        elif self.args.json:
+            self.print_json()
+        else:
+            for node_id, node_data in sorted(self.cib.nodes.items()):
+                if self.args.node:
+                    if node_id != self.args.node:
                         continue
-                self.print_resource(resource_data)
-                for op in resource_data['ops']:
-                    self.print_op(op)
+                self.print_node(node_data)
+                for resource_id, resource_data in sorted(node_data['resources'].items()):
+                    if self.args.primitive:
+                        if resource_id != self.args.primitive:
+                            continue
+                    self.print_resource(resource_data)
+                    for op in resource_data['ops']:
+                        self.print_op(op)
 
 ###########################################################################################################
 
