@@ -105,19 +105,24 @@ class Color:
             width = width.to_i
         self.width = abs(width)
 
-    def align_string(self, string):
-        if self.width == 0 or self.align == 'off':
+    def align_string(self, string, width=None, align=None):
+        if not width:
+            width = self.width
+        if not align:
+            align = self.align
+
+        if width == 0 or align == 'off':
             return string
 
         if sys.version_info < (3, 0):
             string = string.decode(self.charset)
 
-        if self.align == 'right':
-            string = string[0:self.width].rjust(self.width)
-        elif self.align == 'center':
-            string = string[0:self.width].center(self.width)
-        elif self.align == 'left':
-            string = string[0:self.width].ljust(self.width)
+        if align == 'right':
+            string = string[0:width].rjust(width)
+        elif align == 'center':
+            string = string[0:width].center(width)
+        elif align == 'left':
+            string = string[0:width].ljust(width)
 
         if sys.version_info < (3, 0):
             string = string.encode(self.charset)
@@ -193,14 +198,14 @@ class Color:
             str(self.bright_background),
         )
 
-    def process(self, string):
+    def process(self, string, width=None, align=None):
         if self.enabled:
-            return self.color_string() + self.align_string(string) + self.reset
+            return self.color_string() + self.align_string(string, width, align) + self.reset
         else:
             return string
 
-    def __call__(self, string):
-        return self.process(string)
+    def __call__(self, string, width=None, align=None):
+        return self.process(string, width, align)
 
     def __str__(self):
         return self.color_string()

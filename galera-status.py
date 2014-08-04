@@ -26,6 +26,8 @@ class Galera:
                 )
                 self.cursor = self.db.cursor()
                 break
+        if not (self.db and self.cursor):
+            raise StandardError('Could not connect to the database!')
 
     def get_variables(self, query):
         if not (self.db and self.cursor):
@@ -41,6 +43,15 @@ class Galera:
         self.get_variables("show variables like 'wsrep_%'")
         self.get_variables("show status like 'wsrep_%'")
         self.close()
+        if len(self.data) == 0:
+            raise StandardError('There is no Galera data!')
+
+    def load_from_yaml(self, yaml_data):
+        from yaml import load
+        stream = open(yaml_data, 'r')
+        self.data = load(stream)
+        if (type(self.data) is not dict) or (len(self.data) == 0):
+            raise StandardError('There is no Galera data!')
 
     def close(self):
         if self.cursor:
@@ -57,6 +68,7 @@ class Interface:
     def __init__(self):
         self.parser = argparse.ArgumentParser()
         self.parser.add_argument("-d", "--debug", help="debug output", type=int, choices=[0, 1, 2, 3], default=0)
+        self.parser.add_argument("-f", "--file", help="get data from YAML file", type=str)
         self.parser.add_argument("-y", "--yaml", help="output as YAML", action='store_true')
         self.parser.add_argument("-j", "--json", help="output as JSON", action='store_true')
         self.args = self.parser.parse_args()
@@ -64,9 +76,16 @@ class Interface:
         self.color_good = Color(foreground='green')
         self.color_progress = Color(foreground='yellow')
         self.color_bad = Color(foreground='red')
-        self.color_title = Color(foreground='blue')
+        self.color_info = Color(foreground='blue')
+        self.align = Color(align='right')
 
         self.galera = Galera()
+        if self.args.file:
+            self.galera.load_from_yaml(self.args.file)
+        else:
+            self.galera.get_galera_data()
+
+        self.result()
 
     def debug(self, msg='', debug=1, offset=None):
         """
@@ -104,21 +123,45 @@ class Interface:
         from yaml import dump
         self.puts(dump(self.galera.data))
 
-    def pretty_print(self):
+    def print_json(self):
         """
-        Pretty print Galera data
-        @return:
+        Print JSON formated data
+        @return: JSON string
         """
-        import pprint
-        pprint.pprint(self.galera.data)
+        from json import dumps
+        self.puts(dumps(self.galera.data))
 
-dummy_data = {'wsrep_slave_threads': '2', 'wsrep_OSU_method': 'TOI', 'wsrep_node_address': '192.168.0.2', 'wsrep_provider_name': 'Galera', 'wsrep_connected': 'ON', 'wsrep_cert_deps_distance': '14.188782', 'wsrep_commit_oooe': '0.000000', 'wsrep_start_position': '00000000-0000-0000-0000-000000000000:-1', 'wsrep_local_cached_downto': '1', 'wsrep_local_state': '4', 'wsrep_sst_auth': '********', 'wsrep_cluster_conf_id': '3', 'wsrep_provider_version': '3.5(rXXXX)', 'wsrep_sst_receive_address': 'AUTO', 'wsrep_provider_options': 'base_host = 192.168.0.2; base_port = 4567; cert.log_conflicts = no; debug = no; evs.causal_keepalive_period = PT1S; evs.debug_log_mask = 0x1; evs.inactive_check_period = PT0.5S; evs.inactive_timeout = PT15S; evs.info_log_mask = 0; evs.install_timeout = PT15S; evs.join_retrans_period = PT1S; evs.keepalive_period = PT1S; evs.max_install_timeouts = 1; evs.send_window = 4; evs.stats_report_period = PT1M; evs.suspect_timeout = PT5S; evs.use_aggregate = true; evs.user_send_window = 2; evs.version = 0; evs.view_forget_timeout = P1D; gcache.dir = /var/lib/mysql/; gcache.keep_pages_size = 0; gcache.mem_size = 0; gcache.name = /var/lib/mysql//galera.cache; gcache.page_size = 128M; gcache.size = 128M; gcs.fc_debug = 0; gcs.fc_factor = 1.0; gcs.fc_limit = 16; gcs.fc_master_slave = no; gcs.max_packet_size = 64500; gcs.max_throttle = 0.25; gcs.recv_q_hard_limit = 9223372036854775807; gcs.recv_q_soft_limit = 0.25; gcs.sync_donor = no; gmcast.listen_addr = tcp://0.0.0.0:4567; gmcast.mcast_addr = ; gmcast.mcast_ttl = 1; gmcast.peer_timeout = PT3S; gmcast.segment = 0; gmcast.time_wait = PT5S; gmcast.version = 0; ist.recv_addr = 192.168.0.2; pc.announce_timeout = PT3S; pc.checksum = false; pc.ignore_quorum = false; pc.ignore_sb = false; pc.linger = PT20S; pc.npvo = false; pc.version = 0; pc.wait_prim = true; pc.wait_prim_timeout = P30S; pc.weight = 1; protonet.backend = asio; protonet.version = 0; repl.causal_read_timeout = PT30S; repl.commit_order = 3; repl.key_format = FLAT8; repl.max_ws_size = 2147483647; repl.proto_max = 5; socket.checksum = 2; ', 'wsrep_last_committed': '157552', 'wsrep_causal_reads': '0', 'wsrep_local_state_uuid': '040e8708-18a1-11e4-a9e1-474318f54076', 'wsrep_certify_nonPK': 'ON', 'wsrep_received_bytes': '176784', 'wsrep_repl_keys_bytes': '9387555', 'wsrep_flow_control_recv': '0', 'wsrep_protocol_version': '5', 'wsrep_local_state_comment': 'Synced', 'wsrep_node_incoming_address': 'AUTO', 'wsrep_cluster_address': 'gcomm://', 'wsrep_on': 'ON', 'wsrep_local_index': '0', 'wsrep_local_send_queue_avg': '0.000095', 'wsrep_repl_data_bytes': '54606418', 'wsrep_node_name': 'node-1.domain.tld', 'wsrep_local_recv_queue': '0', 'wsrep_auto_increment_control': 'ON', 'wsrep_cluster_status': 'Primary', 'wsrep_replicate_myisam': 'OFF', 'wsrep_cluster_size': '3', 'wsrep_replicated': '157178', 'wsrep_debug': 'OFF', 'wsrep_local_replays': '0', 'wsrep_convert_LOCK_to_trx': 'OFF', 'wsrep_local_recv_queue_avg': '0.001833', 'wsrep_incoming_addresses': '192.168.0.2:3307,192.168.0.3:3307,192.168.0.7:3307', 'wsrep_sst_method': 'mysqldump', 'wsrep_forced_binlog_format': 'NONE', 'wsrep_max_ws_size': '1073741824', 'wsrep_repl_keys': '721557', 'wsrep_ready': 'ON', 'wsrep_sst_donor_rejects_queries': 'OFF', 'wsrep_data_home_dir': '/var/lib/mysql/', 'wsrep_commit_window': '1.000413', 'wsrep_local_cert_failures': '0', 'wsrep_flow_control_paused_ns': '0', 'wsrep_cluster_state_uuid': '040e8708-18a1-11e4-a9e1-474318f54076', 'wsrep_received': '1637', 'wsrep_local_send_queue': '0', 'wsrep_replicated_bytes': '74053365', 'wsrep_cert_interval': '0.003980', 'wsrep_flow_control_paused': '0.000000', 'wsrep_local_commits': '156624', 'wsrep_cert_index_size': '43', 'wsrep_apply_oool': '0.000000', 'wsrep_cluster_name': 'openstack', 'wsrep_log_conflicts': 'OFF', 'wsrep_apply_window': '1.002221', 'wsrep_apply_oooe': '0.001847', 'wsrep_provider_vendor': 'Codership Oy <info@codership.com>', 'wsrep_repl_other_bytes': '0', 'wsrep_flow_control_sent': '0', 'wsrep_retry_autocommit': '1', 'wsrep_mysql_replication_bundle': '0', 'wsrep_drupal_282555_workaround': 'OFF', 'wsrep_max_ws_rows': '131072', 'wsrep_preordered': 'OFF', 'wsrep_load_data_splitting': 'ON', 'wsrep_recover': 'OFF', 'wsrep_local_bf_aborts': '0', 'wsrep_commit_oool': '0.000000', 'wsrep_desync': 'OFF', 'wsrep_provider': '/usr/lib64/galera/libgalera_smm.so'}
+    def result(self):
+        if self.args.yaml:
+            self.print_yaml()
+        elif self.args.json:
+            self.print_json()
+        else:
+            self.print_report()
+
+    def print_report(self):
+        from jinja2 import Environment
+        env = Environment()
+        env.filters['color_info'] = self.color_info
+        env.filters['color_bad'] = self.color_bad
+        env.filters['color_good'] = self.color_good
+        env.filters['color_progress'] = self.color_progress
+        env.filters['align'] = self.align
+
+        report = """
+Cluster: {{ wsrep_cluster_name|default('?')|color_info }} Size: {{ wsrep_cluster_size|default('?')|color_info }} Status: {{ wsrep_cluster_status }}
+
+Replication: {{ wsrep_on|align(3) }} Debug: {{ wsrep_debug|align(3) }}
+Connected:   {{ wsrep_connected|align(3) }}
+Ready:       {{ wsrep_ready|align(3) }}
+
+        """.strip()
+
+        template = env.from_string(report)
+        self.puts(template.render(self.galera.data))
 
 
 ##############################################################################
 
 if __name__ == '__main__':
     interface = Interface()
-    #interface.galera.get_galera_data()
-    interface.galera.data = dummy_data
-    interface.pretty_print()
