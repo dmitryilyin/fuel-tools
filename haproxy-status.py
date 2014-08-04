@@ -19,9 +19,9 @@ class Interface:
         self.parser.add_argument("-c", "--csv", help="output as CSV", action='store_true')
         self.args = self.parser.parse_args()
 
-        self.color_on = Color(fgcode='green')
-        self.color_off = Color(fgcode='red')
-        self.color_title = Color(fgcode='blue')
+        self.color_on = Color(foreground='green')
+        self.color_off = Color(foreground='red')
+        self.color_title = Color(foreground='blue')
 
         self.color_table = {
             'UP': self.color_on,

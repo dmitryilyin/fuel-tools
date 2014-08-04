@@ -1,32 +1,32 @@
+import sys
+
+
 class Color:
     """
     A custom fancy colors class
     """
-    def __init__(self, fgcode=None, bgcode=None, attrcode=0, enabled=True, brightfg=False, brightbg=False):
+
+    def __init__(
+            self,
+            foreground=None,
+            background=None,
+            attribute=0,
+            enabled=True,
+            bright_foreground=False,
+            bright_background=False,
+            align='off',
+            width=0,
+    ):
         self.start = "\033["
         self.end = "m"
         self.reset = self.start + "0" + self.end
+        self.charset = 'utf-8'
 
-        if enabled:
-            self.enabled = True
-        else:
-            self.enabled = False
+        self.foreground_offset = 30
+        self.background_offset = 40
+        self.brightness_offset = 60
 
-        if brightfg:
-            self.brightfg = True
-        else:
-            self.brightfg = False
-
-        if brightbg:
-            self.brightbg = True
-        else:
-            self.brightbg = False
-
-        self.fgoffset = 30
-        self.bgoffset = 40
-        self.brightoffset = 60
-
-        self.colortable = {
+        self.color_table = {
             'black': 0,
             'red': 1,
             'green': 2,
@@ -38,23 +38,42 @@ class Color:
             'off': None,
         }
 
-        self.attrtable = {
+        self.attribute_table = {
             'normal': 0,
             'bold': 1,
             'faint': 2,
-            #'italic':    3,
+            'italic': 3,
             'underline': 4,
             'blink': 5,
-            #'rblink':    6,
+            'rblink': 6,
             'negative': 7,
             'conceal': 8,
-            #'crossed':   9,
+            'crossed': 9,
             'off': 0,
         }
 
-        self.setFG(fgcode)
-        self.setBG(bgcode)
-        self.setATTR(attrcode)
+        self.align_types = ['left', 'right', 'center', 'off']
+
+        self.invert_color_table = None
+        self.invert_attribute_table = None
+
+        self.set_foreground(foreground)
+        self.set_background(background)
+        self.set_attribute(attribute)
+        self.set_width(width)
+        self.set_align(align)
+        self.set_enabled(enabled)
+        self.set_bright_foreground(bright_foreground)
+        self.set_bright_background(bright_background)
+
+    def set_enabled(self, enabled):
+        self.enabled = bool(enabled)
+
+    def set_bright_foreground(self, bright_foreground):
+        self.bright_foreground = bool(bright_foreground)
+
+    def set_bright_background(self, bright_background):
+        self.bright_background = bool(bright_background)
 
     def toggle_enabled(self):
         if self.enabled:
@@ -62,90 +81,129 @@ class Color:
         else:
             self.enabled = True
 
-    def toggle_brightfg(self):
-        if self.brightfg:
-            self.brightfg = False
+    def toggle_bright_foreground(self):
+        if self.bright_foreground:
+            self.bright_foreground = False
         else:
-            self.brightfg = True
+            self.bright_foreground = True
 
-    def toggle_brightbg(self):
-        if self.brightbg:
-            self.brightbg = False
+    def toggle_bright_background(self):
+        if self.bright_background:
+            self.bright_background = False
         else:
-            self.brightbg = True
+            self.bright_background = True
 
-    def setFG(self, color):
+    def set_align(self, align):
+        if align in self.align_types:
+            self.align = align
+            return True
+        else:
+            return False
+
+    def set_width(self, width):
+        if type(width) != int:
+            width = width.to_i
+        self.width = abs(width)
+
+    def align_string(self, string):
+        if self.width == 0 or self.align == 'off':
+            return string
+
+        if sys.version_info < (3, 0):
+            string = string.decode(self.charset)
+
+        if self.align == 'right':
+            string = string[0:self.width].rjust(self.width)
+        elif self.align == 'center':
+            string = string[0:self.width].center(self.width)
+        elif self.align == 'left':
+            string = string[0:self.width].ljust(self.width)
+
+        if sys.version_info < (3, 0):
+            string = string.encode(self.charset)
+
+        return string
+
+    def set_foreground(self, color):
         if type(color) == int:
-            self.fgcode = color
+            self.foreground_code = abs(color)
             return True
-        if color in self.colortable:
-            self.fgcode = self.colortable[color]
+        if color in self.color_table:
+            self.foreground_code = self.color_table[color]
             return True
-        self.fgcode = None
+        self.foreground_code = None
         return False
 
-    def setBG(self, color):
+    def set_background(self, color):
         if type(color) == int:
-            self.bgcode = color
+            self.background_code = abs(color)
             return True
-        if color in self.colortable:
-            self.bgcode = self.colortable[color]
+        if color in self.color_table:
+            self.background_code = self.color_table[color]
             return True
-        self.bgcode = None
+        self.background_code = None
         return False
 
-    def setATTR(self, color):
-        if type(color) == int:
-            self.attrcode = color
+    def set_attribute(self, attribute):
+        if type(attribute) == int:
+            self.attribute_code = abs(attribute)
             return True
-        if color in self.attrtable:
-            self.attrcode = self.attrtable[color]
+        if attribute in self.attribute_table:
+            self.attribute_code = self.attribute_table[attribute]
             return True
-        self.attrcode = 0
+        self.attribute_code = 0
         return False
 
-    def escape(self):
+    def color_string(self):
         components = []
-        attrcode = self.attrcode
+        attribute_code = self.attribute_code
 
-        if self.fgcode is not None:
-            fgcode = self.fgoffset + self.fgcode
-            if self.brightfg:
-                fgcode += self.brightoffset
+        if self.foreground_code is not None:
+            forteground_code = self.foreground_offset + self.foreground_code
+            if self.bright_foreground:
+                forteground_code += self.brightness_offset
         else:
-            fgcode = None
+            forteground_code = None
 
-        if self.bgcode is not None:
-            bgcode = self.bgoffset + self.bgcode
-            if self.brightbg:
-                bgcode += self.brightoffset
+        if self.background_code is not None:
+            background_code = self.background_offset + self.background_code
+            if self.bright_background:
+                background_code += self.brightness_offset
         else:
-            bgcode = None
+            background_code = None
 
-        components.append(attrcode)
-        if fgcode:
-            components.append(fgcode)
-        if bgcode:
-            components.append(bgcode)
+        components.append(attribute_code)
+        if forteground_code:
+            components.append(forteground_code)
+        if background_code:
+            components.append(background_code)
 
-        escstr = self.start + ";".join(map(str, components)) + self.end
-        return escstr
+        return self.start + ";".join(map(str, components)) + self.end
 
-    def __str__(self):
-        return self.escape()
-
-    def __repr__(self):
-        return "Color(fgcode=%s, bgcode=%s, attrcode=%s, enabled=%s, brightfg=%s, brightbg=%s)" % (
-            self.fgcode,
-            self.bgcode,
-            self.attrcode,
-            str(self.enabled),
-            str(self.brightfg),
-            str(self.brightbg),
+    def show(self):
+        if not self.invert_color_table:
+            self.invert_color_table = dict((v, k) for k, v in self.color_table.iteritems())
+        if not self.invert_attribute_table:
+            self.invert_attribute_table = dict((v, k) for k, v in self.attribute_table.iteritems())
+        return "Color(foreground='%s', background='%s', attribute='%s', bright_foreground=%s, bright_background=%s)" % (
+            self.invert_color_table[self.foreground_code],
+            self.invert_color_table[self.background_code],
+            self.invert_attribute_table[self.attribute_code],
+            str(self.bright_foreground),
+            str(self.bright_background),
         )
 
-    def __call__(self, string):
+    def process(self, string):
         if self.enabled:
-            return self.escape() + string + self.reset
+            return self.color_string() + self.align_string(string) + self.reset
         else:
             return string
+
+    def __call__(self, string):
+        return self.process(string)
+
+    def __str__(self):
+        return self.color_string()
+
+    def __repr__(self):
+        return self.show()

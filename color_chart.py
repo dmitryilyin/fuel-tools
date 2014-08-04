@@ -4,16 +4,22 @@ import sys
 
 
 democolor = Color()
-for fg in [None, 0, 1, 2, 3, 4, 5, 6, 7]:
-    for bg in [None, 0, 1, 2, 3, 4, 5, 6, 7]:
-        for attr in sorted(democolor.attrtable.values()):
-            democolor.setFG(fg)
-            democolor.setBG(bg)
-            democolor.setATTR(attr)
-            democolor.brightfg = False
-            democolor.brightbg = False
-            sys.stdout.write(democolor("Hello World!") + "\t" + repr(democolor) + "\n")
-            democolor.brightfg = True
-            sys.stdout.write(democolor("Hello World!") + "\t" + repr(democolor) + "\n")
-            democolor.brightbg = True
-            sys.stdout.write(democolor("Hello World!") + "\t" + repr(democolor) + "\n")
+
+colors = sorted(democolor.color_table.keys())
+colors.insert(0, None)
+attributes = sorted(democolor.attribute_table.keys())
+brightness = [False, True]
+
+for bg in colors:
+    for fg in colors:
+        for attr in attributes:
+            for bright_background in brightness:
+                for bright_foreground in brightness:
+                    democolor.set_foreground(fg)
+                    democolor.set_background(bg)
+                    democolor.set_attribute(attr)
+                    democolor.set_bright_foreground(bright_foreground)
+                    democolor.set_bright_background(bright_background)
+                    democolor.set_width(20)
+                    democolor.set_align('center')
+                    sys.stdout.write(democolor("Hello World!") + "\t" + repr(democolor) + "\n")

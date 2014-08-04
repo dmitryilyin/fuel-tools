@@ -12,11 +12,11 @@ class Interface:
     """
 
     def __init__(self):
-        self.error_color = Color(fgcode='red')
-        self.running_color = Color(fgcode='green', brightfg=True)
-        self.not_running_color = Color(fgcode=5, attrcode=0, enabled=True, brightfg=True, brightbg=False)
-        self.debug_color = Color(fgcode=6, bgcode=5, attrcode=1, enabled=True, brightfg=False, brightbg=False)
-        self.title_color = Color(fgcode='blue')
+        self.error_color = Color(foreground='red')
+        self.running_color = Color(foreground='green', bright_foreground=True)
+        self.not_running_color = Color(foreground=5, attribute=0, enabled=True, bright_foreground=True, bright_background=False)
+        self.debug_color = Color(foreground=6, background=5, attribute=1, enabled=True, bright_foreground=False, bright_background=False)
+        self.title_color = Color(foreground='blue')
 
         self.ocf_rc_codes = {
             '0': self.running_color('Success'),
