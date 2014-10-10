@@ -1,0 +1,379 @@
+--- !ruby/object:Puppet::Transaction::Report
+  puppet_version: "3.4.2"
+  status: failed
+  host: node-3.local
+  metrics: 
+    events: !ruby/object:Puppet::Util::Metric
+      label: Events
+      values: 
+        - - success
+          - Success
+          - 2
+        - - total
+          - Total
+          - 3
+        - - failure
+          - Failure
+          - 1
+      name: events
+    changes: !ruby/object:Puppet::Util::Metric
+      label: Changes
+      values: 
+        - - total
+          - Total
+          - 2
+      name: changes
+    resources: !ruby/object:Puppet::Util::Metric
+      label: Resources
+      values: 
+        - - failed
+          - Failed
+          - 1
+        - - changed
+          - Changed
+          - 2
+        - - skipped
+          - Skipped
+          - 0
+        - - total
+          - Total
+          - 10
+        - - out_of_sync
+          - "Out of sync"
+          - 3
+        - - scheduled
+          - Scheduled
+          - 0
+        - - failed_to_restart
+          - "Failed to restart"
+          - 0
+        - - restarted
+          - Restarted
+          - 0
+      name: resources
+    time: !ruby/object:Puppet::Util::Metric
+      label: Time
+      values: 
+        - - file
+          - File
+          - 0.001508
+        - - schedule
+          - Schedule
+          - 0.001393
+        - - filebucket
+          - Filebucket
+          - 0.000428
+        - - total
+          - Total
+          - 0.269023
+        - - exec
+          - Exec
+          - 0.068076
+        - - notify
+          - Notify
+          - 0.000889
+        - - config_retrieval
+          - "Config retrieval"
+          - 0.196729
+      name: time
+  logs: 
+    - !ruby/object:Puppet::Util::Log
+      tags: 
+        - file
+        - class
+        - notice
+      line: 3
+      source: /Stage[main]/Main/File[/tmp/1]/ensure
+      file: /root/1.pp
+      message: created
+      level: !ruby/sym notice
+      time: 2014-10-10 10:50:05.016104 +00:00
+    - !ruby/object:Puppet::Util::Log
+      tags: 
+        - notice
+      source: Puppet
+      message: adsad
+      level: !ruby/sym notice
+      time: 2014-10-10 10:50:05.018120 +00:00
+    - !ruby/object:Puppet::Util::Log
+      tags: 
+        - class
+        - adsad
+        - notify
+        - notice
+      line: 5
+      source: /Stage[main]/Main/Notify[adsad]/message
+      file: /root/1.pp
+      message: "defined 'message' as 'adsad'"
+      level: !ruby/sym notice
+      time: 2014-10-10 10:50:05.018282 +00:00
+    - !ruby/object:Puppet::Util::Log
+      tags: 
+        - err
+      source: Puppet
+      message: "/bin/false returned 1 instead of one of [0]"
+      level: !ruby/sym err
+      time: 2014-10-10 10:50:05.086109 +00:00
+    - !ruby/object:Puppet::Util::Log
+      tags: 
+        - class
+        - err
+        - exec
+      line: 7
+      source: /Stage[main]/Main/Exec[/bin/false]/returns
+      file: /root/1.pp
+      message: "change from notrun to 0 failed: /bin/false returned 1 instead of one of [0]"
+      level: !ruby/sym err
+      time: 2014-10-10 10:50:05.086889 +00:00
+    - !ruby/object:Puppet::Util::Log
+      tags: 
+        - notice
+      source: Puppet
+      message: "Finished catalog run in 0.47 seconds"
+      level: !ruby/sym notice
+      time: 2014-10-10 10:50:05.383946 +00:00
+  transaction_uuid: "0350bc58-0d75-492f-b953-3bc8ac07d69e"
+  kind: apply
+  configuration_version: 1412938201
+  environment: production
+  time: 2014-10-10 10:50:01.917197 +00:00
+  report_format: 4
+  resource_statuses: 
+    Schedule[weekly]: !ruby/object:Puppet::Resource::Status
+      resource: Schedule[weekly]
+      file: 
+      line: 
+      evaluation_time: 0.000305
+      change_count: 0
+      out_of_sync_count: 0
+      tags: 
+        - schedule
+        - weekly
+      time: 2014-10-10 10:50:05.089167 +00:00
+      events: []
+      out_of_sync: false
+      changed: false
+      resource_type: Schedule
+      title: weekly
+      skipped: false
+      failed: false
+      containment_path: 
+        - Schedule[weekly]
+    Notify[adsad]: !ruby/object:Puppet::Resource::Status
+      resource: Notify[adsad]
+      file: /root/1.pp
+      line: 5
+      evaluation_time: 0.000889
+      change_count: 1
+      out_of_sync_count: 1
+      tags: 
+        - class
+        - adsad
+        - notify
+      time: 2014-10-10 10:50:05.017527 +00:00
+      events: 
+        - !ruby/object:Puppet::Transaction::Event
+          audited: false
+          property: message
+          previous_value: !ruby/sym absent
+          desired_value: adsad
+          historical_value: 
+          message: "defined 'message' as 'adsad'"
+          name: !ruby/sym message_changed
+          status: success
+          time: 2014-10-10 10:50:05.018001 +00:00
+      out_of_sync: true
+      changed: true
+      resource_type: Notify
+      title: adsad
+      skipped: false
+      failed: false
+      containment_path: 
+        - Stage[main]
+        - Main
+        - Notify[adsad]
+    Schedule[monthly]: !ruby/object:Puppet::Resource::Status
+      resource: Schedule[monthly]
+      file: 
+      line: 
+      evaluation_time: 0.000204
+      change_count: 0
+      out_of_sync_count: 0
+      tags: 
+        - monthly
+        - schedule
+      time: 2014-10-10 10:50:04.997064 +00:00
+      events: []
+      out_of_sync: false
+      changed: false
+      resource_type: Schedule
+      title: monthly
+      skipped: false
+      failed: false
+      containment_path: 
+        - Schedule[monthly]
+    File[/tmp/1]: !ruby/object:Puppet::Resource::Status
+      resource: File[/tmp/1]
+      file: /root/1.pp
+      line: 3
+      evaluation_time: 0.001508
+      change_count: 1
+      out_of_sync_count: 1
+      tags: 
+        - file
+        - class
+      time: 2014-10-10 10:50:05.014819 +00:00
+      events: 
+        - !ruby/object:Puppet::Transaction::Event
+          audited: false
+          property: ensure
+          previous_value: !ruby/sym absent
+          desired_value: !ruby/sym link
+          historical_value: 
+          message: created
+          name: !ruby/sym link_created
+          status: success
+          time: 2014-10-10 10:50:05.015542 +00:00
+      out_of_sync: true
+      changed: true
+      resource_type: File
+      title: /tmp/1
+      skipped: false
+      failed: false
+      containment_path: 
+        - Stage[main]
+        - Main
+        - File[/tmp/1]
+    Schedule[hourly]: !ruby/object:Puppet::Resource::Status
+      resource: Schedule[hourly]
+      file: 
+      line: 
+      evaluation_time: 0.000188
+      change_count: 0
+      out_of_sync_count: 0
+      tags: 
+        - schedule
+        - hourly
+      time: 2014-10-10 10:50:04.997594 +00:00
+      events: []
+      out_of_sync: false
+      changed: false
+      resource_type: Schedule
+      title: hourly
+      skipped: false
+      failed: false
+      containment_path: 
+        - Schedule[hourly]
+    Schedule[daily]: !ruby/object:Puppet::Resource::Status
+      resource: Schedule[daily]
+      file: 
+      line: 
+      evaluation_time: 0.000221
+      change_count: 0
+      out_of_sync_count: 0
+      tags: 
+        - schedule
+        - daily
+      time: 2014-10-10 10:50:04.996458 +00:00
+      events: []
+      out_of_sync: false
+      changed: false
+      resource_type: Schedule
+      title: daily
+      skipped: false
+      failed: false
+      containment_path: 
+        - Schedule[daily]
+    Schedule[puppet]: !ruby/object:Puppet::Resource::Status
+      resource: Schedule[puppet]
+      file: 
+      line: 
+      evaluation_time: 0.00027
+      change_count: 0
+      out_of_sync_count: 0
+      tags: 
+        - puppet
+        - schedule
+      time: 2014-10-10 10:50:05.090047 +00:00
+      events: []
+      out_of_sync: false
+      changed: false
+      resource_type: Schedule
+      title: puppet
+      skipped: false
+      failed: false
+      containment_path: 
+        - Schedule[puppet]
+    Filebucket[puppet]: !ruby/object:Puppet::Resource::Status
+      resource: Filebucket[puppet]
+      file: 
+      line: 
+      evaluation_time: 0.000428
+      change_count: 0
+      out_of_sync_count: 0
+      tags: 
+        - puppet
+        - filebucket
+      time: 2014-10-10 10:50:05.088124 +00:00
+      events: []
+      out_of_sync: false
+      changed: false
+      resource_type: Filebucket
+      title: puppet
+      skipped: false
+      failed: false
+      containment_path: 
+        - Filebucket[puppet]
+    Schedule[never]: !ruby/object:Puppet::Resource::Status
+      resource: Schedule[never]
+      file: 
+      line: 
+      evaluation_time: 0.000205
+      change_count: 0
+      out_of_sync_count: 0
+      tags: 
+        - never
+        - schedule
+      time: 2014-10-10 10:50:05.016866 +00:00
+      events: []
+      out_of_sync: false
+      changed: false
+      resource_type: Schedule
+      title: never
+      skipped: false
+      failed: false
+      containment_path: 
+        - Schedule[never]
+    Exec[/bin/false]: !ruby/object:Puppet::Resource::Status
+      resource: Exec[/bin/false]
+      file: /root/1.pp
+      line: 7
+      evaluation_time: 0.068076
+      change_count: 0
+      out_of_sync_count: 1
+      tags: 
+        - class
+        - exec
+      time: 2014-10-10 10:50:05.019038 +00:00
+      events: 
+        - !ruby/object:Puppet::Transaction::Event
+          audited: false
+          property: returns
+          previous_value: !ruby/sym notrun
+          desired_value: 
+            - "0"
+          historical_value: 
+          message: "change from notrun to 0 failed: /bin/false returned 1 instead of one of [0]"
+          name: !ruby/sym executed_command
+          status: failure
+          time: 2014-10-10 10:50:05.086599 +00:00
+      out_of_sync: true
+      changed: false
+      resource_type: Exec
+      title: /bin/false
+      skipped: false
+      failed: true
+      containment_path: 
+        - Stage[main]
+        - Main
+        - Exec[/bin/false]
