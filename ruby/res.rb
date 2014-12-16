@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'puppet/application'
 require 'puppet/configurer'
 
@@ -149,3 +150,18 @@ class Puppet::Application::Res < Puppet::Application
   end
 
 end
+
+version = ">= 0"
+
+if ARGV.first
+  str = ARGV.first
+  str = str.dup.force_encoding("BINARY") if str.respond_to? :force_encoding
+  if str =~ /\A_(.*)_\z/
+    version = $1
+    ARGV.shift
+  end
+end
+
+gem 'puppet', version
+load Gem.bin_path('puppet', 'puppet', version)
+

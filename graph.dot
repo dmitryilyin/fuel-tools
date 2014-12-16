@@ -1,0 +1,16 @@
+digraph  {
+	firewall	 [fillcolor=yellow,
+		shape=ellipse];
+	hiera	 [fillcolor=yellow,
+		shape=ellipse];
+	netconfig	 [fillcolor=yellow,
+		shape=ellipse];
+	hiera -> netconfig;
+	tools	 [fillcolor=yellow,
+		shape=ellipse];
+	hiera -> tools;
+	netconfig -> firewall;
+	hosts	 [fillcolor=yellow,
+		shape=ellipse];
+	netconfig -> hosts;
+}

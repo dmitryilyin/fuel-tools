@@ -58,6 +58,7 @@ class PuppetReport:
         status = self.report().get('status', None)
         events = self.report().get('metrics', {}).get('events', {}).get('values', {})
         print "Deployment: " + str(status)
+        print events
         for event in events:
             print event[1], event[2]
 
