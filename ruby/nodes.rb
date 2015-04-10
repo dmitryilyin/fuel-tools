@@ -9,9 +9,121 @@ module FuelNodes
   MEMORY=2097152
   CPUS=4
   DISK_TYPE='qcow2'
+  NET_TYPE='e1000'
   DEBUG=false
   SIZE='50G'
   VNC_LISTEN='127.0.0.1'
+
+  class Net
+    def net_template
+      <<-eos
+<network>
+  <name><%= name %></name>
+<% if is_nat? -%>
+  <forward mode='nat'>
+    <nat>
+      <port start='1024' end='65535'/>
+    </nat>
+  </forward>
+<% end -%>
+  <bridge name='<%= interface %>' stp='on' delay='0'/>
+<% if has_ip? -%>
+  <ip address='<%= ip %>' netmask='<%= mask %>'>
+<% if is_dhcp? -%>
+    <dhcp>
+      <range start='<%= dhcp_from %>' end='<%= dhcp_to %>'/>
+    </dhcp>
+<% end -%>
+  </ip>
+<% end -%>
+</network>
+      eos
+    end
+
+    attr_accessor :index, :name, :ip, :mask, :dhcp_from, :dhcp_to, :nat
+
+    def debug?
+      !!FuelNodes::DEBUG
+    end
+
+    def run(cmd)
+      if debug?
+        puts cmd
+        0
+      else
+        puts cmd
+        system cmd
+        $?.exitstatus
+      end
+    end
+
+    def initialize(index, name, ip=nil, mask=nil)
+      @index = index
+      @name = name
+      if ip
+        @ip = ip
+        @mask = mask
+        @mask = '255.255.255.0' unless mask
+      end
+    end
+
+    def interface
+      "virbr#{index}"
+    end
+
+    def is_nat?
+      nat
+    end
+
+    def has_ip?
+      ip and mask
+    end
+
+    def is_dhcp?
+      dhcp_from and dhcp_to
+    end
+
+    def xml
+      ERB.new(net_template, nil, '-').result(binding)
+    end
+
+    def xml_file
+      File.join FuelNodes::XML_DIR, 'net-' + name + '.xml'
+    end
+
+    def create_xml
+      File.open(xml_file, 'w') { |file| file.write xml}
+    end
+
+    def remove_xml
+      File.delete xml_file if File.exists? xml_file
+    end
+
+    def define_net
+      create_xml
+      run "virsh net-define #{xml_file}"
+    end
+
+    def undefine_net
+      stop_net
+      remove_xml
+      run "virsh net-undefine #{name}"
+    end
+
+    def start_net
+      run "virsh net-start #{name}"
+    end
+
+    def stop_net
+      run "virsh net-destroy #{name}"
+    end
+
+    def restart_net
+      stop_net
+      start_net
+    end
+
+  end
 
   class Node
     def node_template
@@ -50,19 +162,19 @@ module FuelNodes
     <interface type='network'>
     <mac address='<%= mac 1 %>'/>
     <source network='<%= net 1 %>'/>
-    <model type='virtio'/>
+    <model type='<%= net_type %>'/>
     <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
     </interface>
     <interface type='network'>
       <mac address='<%= mac 2 %>'/>
     <source network='<%= net 2 %>'/>
-    <model type='virtio'/>
+    <model type='<%= net_type %>'/>
     <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x0'/>
     </interface>
     <interface type='network'>
       <mac address='<%= mac 3 %>'/>
     <source network='<%= net 3 %>'/>
-    <model type='virtio'/>
+    <model type='<%= net_type %>'/>
     <address type='pci' domain='0x0000' bus='0x00' slot='0x08' function='0x0'/>
     </interface>
     <serial type='pty'>
@@ -120,17 +232,12 @@ module FuelNodes
     </disk>
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
+<% if iso %>
       <source file='<%= iso %>'/>
+<% end %>
       <target dev='hdc' bus='ide'/>
       <readonly/>
       <address type='drive' controller='0' bus='1' target='0' unit='0'/>
-    </disk>
-    <disk type='file' device='cdrom'>
-      <driver name='qemu' type='raw'/>
-      <source file='<%= iso %>'/>
-      <target dev='hdb' bus='ide'/>
-      <readonly/>
-      <address type='drive' controller='0' bus='0' target='0' unit='1'/>
     </disk>
     <controller type='usb' index='0'>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x2'/>
@@ -142,7 +249,7 @@ module FuelNodes
     <interface type='network'>
       <mac address='<%= mac 0 %>'/>
     <source network='<%= net 1 %>'/>
-    <model type='virtio'/>
+    <model type='<%= net_type %>'/>
     <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
     </interface>
     <serial type='pty'>
@@ -200,6 +307,10 @@ module FuelNodes
 
     def disk_type
       FuelNodes::DISK_TYPE.to_s
+    end
+
+    def net_type
+      FuelNodes::NET_TYPE.to_s
     end
 
     def image_dir
@@ -278,6 +389,7 @@ module FuelNodes
     end
 
     def undefine_domain
+      stop_domain
       remove_xml
       run "virsh undefine #{name}"
     end
@@ -285,6 +397,19 @@ module FuelNodes
     def define_domain
       create_xml
       run "virsh define #{xml_file}"
+    end
+
+    def start_domain
+      run "virsh start #{name}"
+    end
+
+    def stop_domain
+      run "virsh destroy #{name}"
+    end
+
+    def restart_domain
+      stop_domain
+      start_domain
     end
 
     def recreate_disk
@@ -327,6 +452,24 @@ module FuelNodes
 
   end
 
+  def self.nets
+    fuel1 = FuelNodes::Net.new(1, 'fuel1', '10.20.0.1', '255.255.255.0')
+    fuel1.nat = true
+    fuel1.dhcp_from = '10.20.0.100'
+    fuel1.dhcp_to = '10.20.0.254'
+
+    fuel2 = FuelNodes::Net.new(2, 'fuel2', '172.16.0.1', '255.255.255.0')
+    fuel2.nat = true
+
+    fuel3 = FuelNodes::Net.new(3, 'fuel3')
+
+    [
+        fuel1,
+        fuel2,
+        fuel3,
+    ]
+  end
+
   def self.nodes
     nodes = []
     nodes << Node.new(0)
@@ -336,9 +479,31 @@ module FuelNodes
     nodes
   end
 
+  def self.remove_nets
+    nets.each do |n|
+      n.stop_net
+      n.undefine_net
+    end
+  end
+
+  def self.create_nets
+    nets.each do |n|
+      n.define_net
+      n.start_net
+    end
+  end
+
   def self.recreate_env
+    stop_nodes
+    remove_nets
+    create_nets
+    recreate_disk_env
+    redefine_env
+  end
+
+  def self.recreate_disk_env
     self.nodes.each do |n|
-      n.recreate_node
+      n.recreate_disk
     end
   end
 
@@ -369,6 +534,27 @@ module FuelNodes
     end
   end
 
+  def self.start_nodes(*nodes)
+    nodes.map do |n|
+      node = Node.new n
+      node.start_domain
+    end
+  end
+
+  def self.stop_nodes(*nodes)
+    nodes.map do |n|
+      node = Node.new n
+      node.stop_domain
+    end
+  end
+
+  def self.restart_nodes(*nodes)
+    nodes.map do |n|
+      node = Node.new n
+      node.restart_domain
+    end
+  end
+
   def self.list_snapshot_nodes(*nodes)
     nodes.map do |n|
       node = Node.new n
@@ -379,4 +565,4 @@ module FuelNodes
 end
 
 require 'pry'
-binding.pry
+FuelNodes.pry
