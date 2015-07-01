@@ -455,12 +455,8 @@ module FuelNodes
   def self.nets
     fuel1 = FuelNodes::Net.new(1, 'fuel1', '10.20.0.1', '255.255.255.0')
     fuel1.nat = true
-    fuel1.dhcp_from = '10.20.0.100'
-    fuel1.dhcp_to = '10.20.0.254'
-
     fuel2 = FuelNodes::Net.new(2, 'fuel2', '172.16.0.1', '255.255.255.0')
     fuel2.nat = true
-
     fuel3 = FuelNodes::Net.new(3, 'fuel3')
 
     [
